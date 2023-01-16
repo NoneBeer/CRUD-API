@@ -1,7 +1,7 @@
-import {startServer} from "./server/server.js";
+import { startServer } from './server/server.js';
 
 const main = () => {
-    startServer();
-}
+  startServer();
+};
 
 main();
