@@ -1,4 +1,4 @@
-import { error } from '../constants/errors.js';
+import { Error } from '../constants/errors.js';
 import { Response } from '../types/response.js';
 import { User } from '../types/user.js';
 import { validateId, validateBody } from '../validators/request.validator.js';
@@ -25,9 +25,9 @@ export class InMemoryDatabase {
     let response: Response;
 
     if (!isIdValid) {
-      response = { code: 400, message: error.notValidId };
+      response = { code: 400, message: Error.notValidId };
     } else if (userIndex === -1) {
-      response = { code: 404, message: error.notFound };
+      response = { code: 404, message: Error.notFound };
     } else {
       response = { code: 200, message: JSON.stringify(this.users[userIndex]) };
     }
@@ -42,7 +42,7 @@ export class InMemoryDatabase {
       this.usersId.push(user.id);
       response = { code: 201, message: JSON.stringify(user) };
     } else {
-      response = { code: 400, message: error.request };
+      response = { code: 400, message: Error.request };
     }
     return response;
   }
@@ -54,9 +54,9 @@ export class InMemoryDatabase {
     const userIndex = this.users.findIndex((user) => user.id === userId);
 
     if (!isIdValid) {
-      response = { code: 400, message: error.notValidId };
+      response = { code: 400, message: Error.notValidId };
     } else if (userIndex === -1) {
-      response = { code: 404, message: error.notFound };
+      response = { code: 404, message: Error.notFound };
     } else if (isBodyValid) {
       const updateUser = { id: userId, ...JSON.parse(body) };
       this.users = this.users
@@ -65,7 +65,7 @@ export class InMemoryDatabase {
         .concat(this.users.slice(userIndex + 1));
       response = { code: 200, message: JSON.stringify(updateUser) };
     } else {
-      response = { code: 400, message: error.request };
+      response = { code: 400, message: Error.request };
     }
     return response;
   }
@@ -76,9 +76,9 @@ export class InMemoryDatabase {
     const userIndex = this.users.findIndex((user) => user.id === userId);
 
     if (!isIdValid) {
-      response = { code: 400, message: error.notValidId };
+      response = { code: 400, message: Error.notValidId };
     } else if (userIndex === -1) {
-      response = { code: 404, message: error.notFound };
+      response = { code: 404, message: Error.notFound };
     } else {
       this.users.splice(userIndex, 1);
       response = { code: 204, message: '' };

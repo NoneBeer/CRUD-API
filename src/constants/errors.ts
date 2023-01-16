@@ -1,4 +1,4 @@
-export const enum error {
+export const enum Error {
   request = 'Bad request',
   operation = 'Unsupported operation',
   server = 'Server error',

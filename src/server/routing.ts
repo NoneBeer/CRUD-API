@@ -1,6 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { baseURL, headerName, headerValue } from '../constants/constants.js';
-import { error } from '../constants/errors.js';
+import { Error } from '../constants/errors.js';
 import { Methods } from '../constants/methods.js';
 import { InMemoryDatabase } from '../database/database.js';
 import { Response } from '../types/response.js';
@@ -25,7 +25,7 @@ export const routing = async (req: IncomingMessage, res: ServerResponse) => {
           break;
         }
         case Methods.post: {
-          response = id ? { code: 400, message: error.request } : database.addUser(body);
+          response = id ? { code: 400, message: Error.request } : database.addUser(body);
           break;
         }
         case Methods.put: {
@@ -37,14 +37,14 @@ export const routing = async (req: IncomingMessage, res: ServerResponse) => {
           break;
         }
         default: {
-          response = { code: 200, message: error.operation };
+          response = { code: 200, message: Error.operation };
         }
       }
     } catch (err) {
-      response = { code: 500, message: error.server };
+      response = { code: 500, message: Error.server };
     }
   } else {
-    response = { code: 404, message: error.notFound };
+    response = { code: 404, message: Error.notFound };
   }
 
   res.setHeader(headerName, headerValue);
