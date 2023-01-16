@@ -1,4 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'http';
+import { baseURL, headerName, headerValue } from '../constants/constants.js';
+import { error } from '../constants/errors.js';
 import { Methods } from '../constants/methods.js';
 import { InMemoryDatabase } from '../database/database.js';
 import { Response } from '../types/response.js';
@@ -6,9 +8,7 @@ import { Response } from '../types/response.js';
 const database = new InMemoryDatabase();
 
 export const routing = async (req: IncomingMessage, res: ServerResponse) => {
-  const [api, users, id] = req.url!.split('/').filter(Boolean);
-
-  // REFACTOR
+  const [api, users, id, ...rest] = req.url!.split('/').filter(Boolean);
   const buffer = [];
   let response: Response;
 
@@ -17,7 +17,7 @@ export const routing = async (req: IncomingMessage, res: ServerResponse) => {
   }
   const body = Buffer.concat(buffer).toString();
 
-  if (`${api}/${users}` === 'api/users') {
+  if (`${api}/${users}` === baseURL && !rest.length) {
     try {
       switch (req.method) {
         case Methods.get: {
@@ -25,7 +25,7 @@ export const routing = async (req: IncomingMessage, res: ServerResponse) => {
           break;
         }
         case Methods.post: {
-          response = database.addUser(body);
+          response = id ? { code: 400, message: error.request } : database.addUser(body);
           break;
         }
         case Methods.put: {
@@ -37,21 +37,17 @@ export const routing = async (req: IncomingMessage, res: ServerResponse) => {
           break;
         }
         default: {
-          // Refactor
-          response = { code: 500, message: 'Server error' };
-          // throw new Error('Error method');
+          response = { code: 200, message: error.operation };
         }
       }
     } catch (err) {
-      // REFACTOR
-      response = { code: 500, message: 'Server error' };
+      response = { code: 500, message: error.server };
     }
   } else {
-    // REFACTOR
-    response = { code: 404, message: 'Error not found' };
+    response = { code: 404, message: error.notFound };
   }
 
-  res.setHeader('Content-Type', 'application/json');
+  res.setHeader(headerName, headerValue);
   res.writeHead(response.code);
   res.end(response.message);
 };
